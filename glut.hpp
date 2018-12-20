@@ -14,9 +14,7 @@ public:
     std::pair<size_t, size_t> sizeOfWindow{sizeOfBoard  * scale, sizeOfBoard  * scale};
 
     static std::shared_ptr<Glut> getInstance() {
-        static std::mutex m;
         static std::weak_ptr<Glut> pInstance;
-        std::lock_guard<std::mutex> lg(m);
         std::shared_ptr<Glut> instance = pInstance.lock();
         if (pInstance.expired()) {
             instance.reset(new Glut);
@@ -24,16 +22,6 @@ public:
         }
         return instance;
     }
-
-    /*static std::shared_ptr<Glut> getInstance() {
-        static std::shared_ptr<Glut> instance = pInstance.lock();
-        if (pInstance.expired()) {
-            instance.reset(new Glut());
-            pInstance = instance;
-        }
-        return instance;
-    }*/
-
     static void displayGameWindow();
     static void displayChatWindow();
     static void mouseWheel(int button, int state, int x, int y);
@@ -45,7 +33,6 @@ private:
     double offset;
     size_t massageCount, countWheelUp;
     std::vector<std::string> names;
-    //static std::weak_ptr<Glut> pInstance;
     Glut() : massageCount(0), countWheelUp(0), offset(0), Game("gamerX", "gamerO") {}
     void drawO(const size_t& i, const size_t& j) const;
     void drawX(const size_t& i, const size_t& j) const;
@@ -58,8 +45,6 @@ private:
     static void timer(int);
 
 };
-
-//std::weak_ptr<Glut> Glut::pInstance;
 
 void Glut::drawO(const size_t& i, const size_t& j) const {
     glBegin(GL_LINE_LOOP);
