@@ -20,8 +20,8 @@ enum eKeyCodes {
 
 class Glut : protected Game {
 public:
-    const static size_t scale = 150;
-    const static size_t maxMessagesWindow = 25;
+    constexpr static size_t scale = 150;
+    constexpr static size_t maxMessagesWindow = 25;
     std::pair<int, int> windowNumber;
     std::pair<size_t, size_t> sizeOfWindow{sizeOfBoard  * scale, sizeOfBoard  * scale};
 
