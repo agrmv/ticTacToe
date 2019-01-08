@@ -8,14 +8,14 @@ int main(int argc, char** argv) {
     glutInitWindowSize(gPtr->sizeOfWindow.first * 2, gPtr->sizeOfWindow.second);
     glutInitWindowPosition(480, 200);
 
-    gPtr->window.first = glutCreateWindow("TicTacToe");
+    gPtr->windowNumber.first = glutCreateWindow("TicTacToe");
     glutDisplayFunc(gPtr->displayChatWindow);
     glutMouseFunc(gPtr->mouseWheel);
     glutReshapeFunc(gPtr->reshape);
     gPtr->init();
 
-    gPtr->window.second = glutCreateSubWindow(gPtr->window.first, gPtr->sizeOfWindow.first, 0, gPtr->sizeOfWindow.first,
-            gPtr->sizeOfWindow.second);
+    gPtr->windowNumber.second = glutCreateSubWindow(gPtr->windowNumber.first, gPtr->sizeOfWindow.first, 0, gPtr->sizeOfWindow.first,
+                                                    gPtr->sizeOfWindow.second);
     glutMouseFunc(gPtr->mousePressed);
     glutDisplayFunc(gPtr->displayGameWindow);
     gPtr->init();

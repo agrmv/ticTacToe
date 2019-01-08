@@ -7,21 +7,29 @@
 #include <GL/freeglut.h>
 #include "game.hpp"
 
+enum eMouseCodes {
+    WHEEL_UP = 3,
+    WHEEL_DOWN = 4
+};
+
+enum eKeyCodes {
+    VKEY_ESC = 27,
+    VKEY_ENTER = 13,
+    VKEY_BACKSPACE = 8,
+};
+
 class Glut : protected Game {
 public:
     const static size_t scale = 150;
-    std::pair<int, int> window;
+    const static size_t maxMessagesWindow = 25;
+    std::pair<int, int> windowNumber;
     std::pair<size_t, size_t> sizeOfWindow{sizeOfBoard  * scale, sizeOfBoard  * scale};
 
-    static std::shared_ptr<Glut> getInstance() {
-        static std::weak_ptr<Glut> pInstance;
-        std::shared_ptr<Glut> instance = pInstance.lock();
-        if (pInstance.expired()) {
-            instance.reset(new Glut);
-            pInstance = instance;
-        }
-        return instance;
+    static Glut* getInstance() {
+        static Glut instance;
+        return &instance;
     }
+
     static void displayGameWindow();
     static void displayChatWindow();
     static void mouseWheel(int button, int state, int x, int y);
@@ -40,7 +48,7 @@ private:
     void drawCards()   const;
     void printResult() const;
     void printChat()   const;
-    void  drawStringBitmap(const std::string& s) const;
+    void drawStringBitmap(const std::string& s) const;
     static void keyboard(unsigned char key, int x, int y);
     static void timer(int);
 
@@ -124,11 +132,10 @@ void Glut::printResult() const {
 }
 
 void Glut::printChat() const{
-    // TODO PERENOS
     glColor3f(0, 0, 0);
     for (size_t i = 0; i < names.size(); ++i) {
         std::ostringstream oss;
-        auto temp = (((i + 1) % 2) != 0) ? "gamerX" : "gamerO";
+        std::string temp = ((((i + 1) % 2) != 0) ? "gamerX" : "gamerO");
         glRasterPos2f(10, 80 + (15 * (i + 1)));
         oss << temp << ": " << names[i];
         drawStringBitmap(oss.str());
@@ -159,7 +166,7 @@ void Glut::displayChatWindow() {
     glPushMatrix();
     glEnable(GL_BLEND);
 
-    glTranslatef(0.0f, ptr->offset, 0.0f);
+    glTranslatef(0, ptr->offset, 0);
     ptr->printResult();
     ptr->printChat();
 
@@ -170,20 +177,20 @@ void Glut::keyboard(unsigned char key, int x, int y) {
     auto ptr = getInstance();
 
     switch (key) {
-        case 27:
+        case VKEY_ESC:
             ptr->gameInit();
             ptr->checkDraw = 0;
             ptr->gameStatus = {0, true};
             break;
-        case 13: {
+        case VKEY_ENTER: {
             ptr->names.emplace_back("");
             ptr->massageCount++;
-            if (ptr->massageCount > 25) {
+            if (ptr->massageCount > maxMessagesWindow) {
                 ptr->offset += 0.068;
             }
         }
             break;
-        case 8:
+        case VKEY_BACKSPACE:
             if ((ptr->massageCount != 0) && (!ptr->names.back().empty())) {
                 ptr->names.back().pop_back();
             }
@@ -224,12 +231,12 @@ void Glut::mouseWheel(int button, int state, int x, int y) {
     auto ptr = getInstance();
 
     if (state == GLUT_DOWN) {
-        if (button == 3 && ptr->offset > 0) {
+        if (button == WHEEL_UP && ptr->offset > 0) {
             ptr->offset -= 0.05;
             ptr->countWheelUp++;
 
         }
-        if (button == 4 && ptr->countWheelUp > 0) {
+        if (button == WHEEL_DOWN && ptr->countWheelUp > 0) {
             ptr->offset += 0.05;
             ptr->countWheelUp--;
         }
@@ -238,9 +245,9 @@ void Glut::mouseWheel(int button, int state, int x, int y) {
 
 void Glut::timer(int) {
     auto ptr = getInstance();
-    glutSetWindow(ptr->window.first);
+    glutSetWindow(ptr->windowNumber.first);
     glutPostRedisplay();
-    glutSetWindow(ptr->window.second);
+    glutSetWindow(ptr->windowNumber.second);
     glutPostRedisplay();
     glutTimerFunc(10, timer, 0);
 }

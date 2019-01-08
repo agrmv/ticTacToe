@@ -7,7 +7,7 @@ class Game {
 protected:
     size_t checkDraw;
     std::pair<uint8_t, bool> gameStatus;
-    const static size_t sizeOfBoard = 3;
+    constexpr static size_t sizeOfBoard = 3;
     std::array<std::array<int32_t, sizeOfBoard>, sizeOfBoard> board;
     Game() : gamerName{"gamerX","gamerO"}, checkDraw(0), gameStatus{0, true} {
         gameInit();
